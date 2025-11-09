@@ -8,6 +8,17 @@ const port = process.env.PORT || 5000;
 // middleware
 app.use(cors());
 app.use(express.json());
+// index.js
+const decoded = Buffer.from(
+  process.env.FIREBASE_SERVICE_KEY,
+  "base64"
+).toString("utf8");
+const serviceAccount = JSON.parse(decoded);
+// const serviceAccount = require("./local-food.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.lq5729d.mongodb.net/?appName=Cluster0`;
 const client = new MongoClient(uri, {
@@ -22,11 +33,30 @@ app.get("/", (req, res) => {
 });
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db("Food_Server");
     const foodCollection = db.collection("Foods");
+    const userCollection = db.collection("users");
+
+    // users Api
+    app.post("/users", async (req, res) => {
+      const newUser = req.body;
+      const email = req.body.email;
+      const query = { email: email };
+      const existingUser = await userCollection.findOne(query);
+      if (existingUser) {
+        res.send({
+          message: "user already exits. do not need to insert again",
+        });
+      }
+      else{
+        const result =await userCollection.insertOne(newUser)
+        res.send(result)
+      }
+    });
+
     // Food Api
-    app.get("/foods", async (req, res) => {
+    app.get("/best-foods", async (req, res) => {
       const email = req.query.email;
       const query = {};
       if (email) {
@@ -36,10 +66,10 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // await client.close();
   }

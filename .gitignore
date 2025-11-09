@@ -1,3 +1,5 @@
 node_modules
 .env
 firebaseAdmin.json
+local-food.json
+.vercel
