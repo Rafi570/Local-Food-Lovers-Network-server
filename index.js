@@ -66,6 +66,16 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    app.get("/foods",async(req,res)=>{
+      const email =req.query.email
+      const query ={}
+      if(email){
+        query.email=email
+      }
+      const cursor =foodCollection.find(query)
+      const result = await cursor.toArray();
+      res.send(result)
+    })
     app.get('/foods/:id',async(req,res)=>{
       const id = req.params.id
       const query ={_id: new ObjectId(id)}
