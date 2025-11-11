@@ -37,7 +37,7 @@ async function run() {
     const db = client.db("Food_Server");
     const foodCollection = db.collection("Foods");
     const userCollection = db.collection("users");
-
+    const reviewCollection = db.collection("review");
     // users Api
     app.post("/users", async (req, res) => {
       const newUser = req.body;
@@ -48,10 +48,9 @@ async function run() {
         res.send({
           message: "user already exits. do not need to insert again",
         });
-      }
-      else{
-        const result =await userCollection.insertOne(newUser)
-        res.send(result)
+      } else {
+        const result = await userCollection.insertOne(newUser);
+        res.send(result);
       }
     });
 
@@ -66,22 +65,65 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
-    app.get("/foods",async(req,res)=>{
-      const email =req.query.email
-      const query ={}
-      if(email){
-        query.email=email
+    app.get("/foods", async (req, res) => {
+      const email = req.query.email;
+      const query = {};
+      if (email) {
+        query.email = email;
       }
-      const cursor =foodCollection.find(query)
+      const cursor = foodCollection.find(query);
       const result = await cursor.toArray();
-      res.send(result)
-    })
-    app.get('/foods/:id',async(req,res)=>{
-      const id = req.params.id
-      const query ={_id: new ObjectId(id)}
-      const result =await foodCollection.findOne(query)
-      res.send(result)
-    })
+      res.send(result);
+    });
+    app.get("/foods/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await foodCollection.findOne(query);
+      res.send(result);
+    });
+    // review section
+
+    app.post("/add-review", async (req, res) => {
+      const newReview = req.body;
+      const result = await reviewCollection.insertOne(newReview);
+      res.send(result);
+    });
+
+    app.get("/review", async (req, res) => {
+      const email = req.query.email;
+      const query = {};
+      if (email) {
+        query.email = email;
+      }
+      const cursor = reviewCollection.find(query).sort({ createdAt: -1 });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.delete("/review/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await reviewCollection.deleteOne(query);
+      res.send(result);
+    });
+    app.patch("/review/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedReview = req.body;
+      const query = { _id: new ObjectId(id) };
+
+      const update = {
+        $set: {
+          foodName: updatedReview.foodName,
+          foodImage: updatedReview.foodImage,
+          restaurantName: updatedReview.restaurantName,
+        },
+      };
+
+      const result = await reviewCollection.updateOne(query, update);
+      res.send(result);
+    });
+
+    // Assuming MongoDB with foods collection
+
     // await client.db("admin").command({ ping: 1 });
     // console.log(
     //   "Pinged your deployment. You successfully connected to MongoDB!"
