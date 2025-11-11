@@ -121,6 +121,18 @@ async function run() {
       const result = await reviewCollection.updateOne(query, update);
       res.send(result);
     });
+    app.get('/review/:id',async(req,res)=>{
+
+      // const id = req.params.id;
+      // const query = { _id: new ObjectId(id) };
+      // const result = await foodCollection.findOne(query);
+      // res.send(result);
+      const id =req.params.id
+      const query ={_id: new ObjectId(id)}
+      const result = await reviewCollection.findOne(query)
+      res.send(result)
+
+    })
 
     // Assuming MongoDB with foods collection
 
