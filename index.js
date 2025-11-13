@@ -163,7 +163,7 @@ async function run() {
     // POST /my-favorites
     app.post("/my-favorites", async (req, res) => {
       try {
-        const { email, foodId, foodName, foodImage, restaurantName } = req.body;
+        const { email, foodId, foodName, foodImage, restaurantName,location  } = req.body;
 
         // 🧩 Validation
         if (!email || !foodId) {
@@ -187,8 +187,10 @@ async function run() {
           email,
           foodId,
           foodName,
+
           foodImage,
           restaurantName,
+          location,
           createdAt: new Date(),
         };
 
