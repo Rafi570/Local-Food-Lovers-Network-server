@@ -2,10 +2,6 @@
 
 This is the **backend** for the Local Food Lovers Network project. It provides REST APIs to handle food reviews, favorites, and user-related operations. The server is built using **Node.js**, **Express**, and **MongoDB**, with Firebase authentication integration for secure routes.
 
----
-
-## 🔗 Live Server (Optional)
-If deployed: `https://your-server-url.vercel.app`
 
 ---
 
@@ -71,4 +67,4 @@ This backend works seamlessly with the **client-side SPA** to deliver a responsi
 
 1. Clone the repository:
 ```bash
-git clone [YOUR_SERVER_REPO_LINK]
+git clone [https://github.com/Rafi570/Local-Food-Lovers-Network-server.git]
